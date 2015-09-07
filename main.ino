@@ -10,8 +10,12 @@
 
 OneWire ds(D0);  // on pin D0 (a 4.7K pull up resistor is necessary)
 
+// Variable to hold temperature in celsius
+double celsius;
+
 void setup(void) {
     Serial.begin(57600);
+    Particle.variable("temperature", &celsius, DOUBLE);
 }
 
 void loop(void) {
@@ -20,14 +24,14 @@ void loop(void) {
     byte i;
     // Whether or not the sensor is present
     byte present = 0;
+    // Whether or not the sensor reading was successful
+    byte success = 0;
     // The sensor type
     byte type_s;
     // Buffer to read data
     byte data[12];
     // Buffer to read address
     byte addr[8];
-    // Variable to hold temperature in celsius
-    float celsius;
 
     if (!ds.search(addr)) {
         Serial.println("No more addresses.");
@@ -119,10 +123,19 @@ void loop(void) {
     // Show temperature
     if (raw == 0x550) {
         Serial.println("  Temperature reading error.");
+        success = 0;
     } else {
-        celsius = (float)raw / 16.0;
+        celsius = (double)raw / 16.0;
         Serial.print("  Temperature = ");
         Serial.print(celsius);
         Serial.println(" Celsius");
+        success = 1;
+    }
+
+    // Sleep
+    if (success) {
+        delay(5000);
+    } else {
+        // Try again immediately
     }
 }
