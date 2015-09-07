@@ -2,6 +2,9 @@
 //
 // This firmware supports DS18S20, DS18B20 and DS1822 temperature sensors.
 // Tested oly with DS18B20.
+//
+// Code is based on example code by Joe Goggins, see `LICENSE.md` for more
+// information.
 
 #include "OneWire.h"
 
@@ -12,12 +15,19 @@ void setup(void) {
 }
 
 void loop(void) {
+
+    // Counter variable
     byte i;
+    // Whether or not the sensor is present
     byte present = 0;
+    // The sensor type
     byte type_s;
+    // Buffer to read data
     byte data[12];
+    // Buffer to read address
     byte addr[8];
-    float celsius, fahrenheit;
+    // Variable to hold temperature in celsius
+    float celsius;
 
     if (!ds.search(addr)) {
         Serial.println("No more addresses.");
@@ -62,12 +72,17 @@ void loop(void) {
     ds.select(addr);
     ds.write(0x44, 1);        // start conversion, with parasite power on at the end
 
-    delay(1000);     // maybe 750ms is enough, maybe not
-    // we might do a ds.depower() here, but the reset will take care of it.
+    // Maybe 750ms is enough, maybe not. Let's do 1000ms.
+    // We might do a `ds.depower()` here, but the reset will take care of it.
+    delay(1000);
 
+    // Send a 1-Wire reset cycle. Returns 1 if a device responds with a
+    // presence pulse. Returns 0 if there is no device or the bus is shorted
+    // or otherwise held low for more than 250uS.
     present = ds.reset();
+
     ds.select(addr);
-    ds.write(0xBE);         // Read Scratchpad
+    ds.write(0xBE); // Read data from scratchpad memory
 
     Serial.print("  Data = ");
     Serial.print(present, HEX);
@@ -81,10 +96,10 @@ void loop(void) {
     Serial.print(OneWire::crc8(data, 8), HEX);
     Serial.println();
 
-    // Convert the data to actual temperature
-    // because the result is a 16 bit signed integer, it should
-    // be stored to an "int16_t" type, which is always 16 bits
-    // even when compiled on a 32 bit processor.
+    // Convert the data to actual temperature.
+    // Because the result is a 16 bit signed integer, it should be stored to an
+    // "int16_t" type, which is always 16 bits even when compiled on a 32 bit
+    // processor.
     int16_t raw = (data[1] << 8) | data[0];
     if (type_s) {
         raw = raw << 3; // 9 bit resolution default
@@ -98,13 +113,10 @@ void loop(void) {
         if (cfg == 0x00) raw = raw & ~7;  // 9 bit resolution, 93.75 ms
         else if (cfg == 0x20) raw = raw & ~3; // 10 bit res, 187.5 ms
         else if (cfg == 0x40) raw = raw & ~1; // 11 bit res, 375 ms
-        //// default is 12 bit resolution, 750 ms conversion time
+        // default is 12 bit resolution, 750 ms conversion time
     }
     celsius = (float)raw / 16.0;
-    fahrenheit = celsius * 1.8 + 32.0;
     Serial.print("  Temperature = ");
     Serial.print(celsius);
-    Serial.print(" Celsius, ");
-    Serial.print(fahrenheit);
-    Serial.println(" Fahrenheit");
+    Serial.println(" Celsius");
 }
