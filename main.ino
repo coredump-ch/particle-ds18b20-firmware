@@ -115,8 +115,14 @@ void loop(void) {
         else if (cfg == 0x40) raw = raw & ~1; // 11 bit res, 375 ms
         // default is 12 bit resolution, 750 ms conversion time
     }
-    celsius = (float)raw / 16.0;
-    Serial.print("  Temperature = ");
-    Serial.print(celsius);
-    Serial.println(" Celsius");
+
+    // Show temperature
+    if (raw == 0x550) {
+        Serial.println("  Temperature reading error.");
+    } else {
+        celsius = (float)raw / 16.0;
+        Serial.print("  Temperature = ");
+        Serial.print(celsius);
+        Serial.println(" Celsius");
+    }
 }
