@@ -1,21 +1,22 @@
 DEVICE=Coredump
+CLI=particle
 
 all: help
 
 login:
-	particle login
+	${CLI} login
 
 setup:
-	particle setup
+	${CLI} setup
 
 list:
-	particle list
+	${CLI} list
 
 flash:
-	particle flash ${DEVICE} .
+	${CLI} flash ${DEVICE} .
 
 temp:
-	particle get ${DEVICE} temperature
+	${CLI} get ${DEVICE} temperature
 
 help:
 	@echo 'Supported make targets: login, setup, list, flash, temp, help'
