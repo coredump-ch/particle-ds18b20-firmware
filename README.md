@@ -25,9 +25,13 @@ To flash the firmware to a Particle Photon, first list the available Photons:
 
     $ make list
 
-Then flash the current directory:
+Then flash the current directory through the cloud:
 
-    $ make DEVICE=<0123456789ABCDEFGHI> flash
+    $ make DEVICE=<0123456789ABCDEFGHI> flash-ota
+
+...or via USB:
+
+    $ make DEVICE=<0123456789ABCDEFGHI> flash-usb
 
 (Replace the device id with the id found in the first command output.)
 
