@@ -13,9 +13,26 @@ OneWire ds(D0);  // on pin D0 (a 4.7K pull up resistor is necessary)
 // Variable to hold temperature in celsius
 double celsius;
 
+// Buffer to read address
+byte addr[8];
+
 void setup(void) {
+    // Initialize the serial console
     Serial.begin(57600);
+
+    // Expose the temperature variable
     Particle.variable("temperature", &celsius, DOUBLE);
+
+    // Write configuration (11 bit resolution)
+    while (ds.search(addr)) {
+        ds.reset();
+        ds.select(addr);
+        ds.write(0x4E); // Write scratchpad
+        ds.write(0x55); // Set T_H to 85°C
+        ds.write(0xFF); // Set T_L to -0.5°C
+        ds.write(0x5F); // Set resolution to 11 bit
+    }
+
 }
 
 void loop(void) {
@@ -28,8 +45,6 @@ void loop(void) {
     byte success = 0;
     // Buffer to read data
     byte data[12];
-    // Buffer to read address
-    byte addr[8];
 
     if (!ds.search(addr)) {
         Serial.println("No more addresses.");
@@ -83,8 +98,10 @@ void loop(void) {
     Serial.print("  Data = ");
     Serial.print(present, HEX);
     Serial.print(" ");
-    for (i = 0; i < 9; i++) {           // we need 9 bytes
-        data[i] = ds.read();
+
+    ds.read_bytes(data, 9);
+
+    for (i = 0; i < 9; i++) {
         Serial.print(data[i], HEX);
         Serial.print(" ");
     }
