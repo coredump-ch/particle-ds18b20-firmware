@@ -12,24 +12,31 @@ Install the Particle CLI: https://docs.particle.io/core/cli/
 
 Log in to your Particle account:
 
-    $ particle login
+    $ make login
 
 Set up your device:
 
-    $ particle setup wifi
+    $ make setup
 
 
 ## Flashing
 
 To flash the firmware to a Particle Photon, first list the available Photons:
 
-    $ particle list
+    $ make list
 
 Then flash the current directory:
 
-    $ particle flash <0123456789ABCDEFGHI> .
+    $ make DEVICE=<0123456789ABCDEFGHI> flash
 
 (Replace the device id with the id found in the first command output.)
+
+
+## Viewing temperature
+
+To display the measured temperature:
+
+    $ make DEVICE=<0123456789ABCDEFGHI> temp
 
 
 ## Wiring
