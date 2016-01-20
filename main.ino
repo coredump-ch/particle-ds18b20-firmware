@@ -131,6 +131,13 @@ void loop(void) {
     //  data[7] -> Reserved (10h)
     //  data[8] -> CRC
 
+    // Verify CRC code
+    if (data[8] != crc) {
+        Particle.publish("crc-error", "scratchpad", 300, PRIVATE);
+        delay(1000);
+        return;
+    }
+
     // Convert the data to actual temperature.
     // Because the result is a 16 bit signed integer, it should be stored to an
     // "int16_t" type, which is always 16 bits even when compiled on a 32 bit
