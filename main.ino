@@ -84,7 +84,9 @@ void loop(void) {
 
     ds.reset();
     ds.select(addr);
-    ds.write(0x44, 1);        // start conversion, with parasite power on at the end
+
+    // Start conversion
+    ds.write(0x44);
 
     // Maybe 750ms is enough, maybe not. Let's do 1000ms.
     // We might do a `ds.depower()` here, but the reset will take care of it.
