@@ -27,6 +27,9 @@ void setup(void) {
     Particle.variable("temperature", &celsius, DOUBLE);
     Particle.variable("raw", &rawHexData, STRING);
 
+    // Log initialization
+    Particle.publish("photon-initialized", NULL, 60, PRIVATE);
+
     // Write configuration (11 bit resolution)
     while (ds.search(addr)) {
         ds.reset();
