@@ -30,7 +30,10 @@ void setup(void) {
         ds.write(0x4E); // Write scratchpad
         ds.write(0x55); // Set T_H to 85°C
         ds.write(0xFF); // Set T_L to -0.5°C
-        ds.write(0x5F); // Set resolution to 11 bit
+        //ds.write(0x1F | (0 << 5)); // Set resolution to 9 bit
+        //ds.write(0x1F | (1 << 5)); // Set resolution to 10 bit
+        ds.write(0x1F | (2 << 5)); // Set resolution to 11 bit
+        //ds.write(0x1F | (3 << 5)); // Set resolution to 12 bit
     }
 
 }
