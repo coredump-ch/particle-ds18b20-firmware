@@ -10,6 +10,9 @@
 
 OneWire ds(D0);  // on pin D0 (a 4.7K pull up resistor is necessary)
 
+// Variable to hold raw data
+String rawHexData = "uninitialized";
+
 // Variable to hold temperature in celsius
 double celsius;
 
@@ -20,8 +23,9 @@ void setup(void) {
     // Initialize the serial console
     Serial.begin(57600);
 
-    // Expose the temperature variable
+    // Expose some variables
     Particle.variable("temperature", &celsius, DOUBLE);
+    Particle.variable("raw", &rawHexData, STRING);
 
     // Write configuration (11 bit resolution)
     while (ds.search(addr)) {
@@ -32,8 +36,8 @@ void setup(void) {
         ds.write(0xFF); // Set T_L to -0.5°C
         //ds.write(0x1F | (0 << 5)); // Set resolution to 9 bit
         //ds.write(0x1F | (1 << 5)); // Set resolution to 10 bit
-        ds.write(0x1F | (2 << 5)); // Set resolution to 11 bit
-        //ds.write(0x1F | (3 << 5)); // Set resolution to 12 bit
+        //ds.write(0x1F | (2 << 5)); // Set resolution to 11 bit
+        ds.write(0x1F | (3 << 5)); // Set resolution to 12 bit
     }
 
 }
@@ -48,6 +52,8 @@ void loop(void) {
     byte success = 0;
     // Buffer to read data
     byte data[12];
+    // CRC value
+    uint8_t crc;
 
     if (!ds.search(addr)) {
         Serial.println("No more addresses.");
@@ -97,22 +103,21 @@ void loop(void) {
     // or otherwise held low for more than 250uS.
     present = ds.reset();
 
+    // Request data from scratchpad memory
     ds.select(addr);
-    ds.write(0xBE); // Read data from scratchpad memory
+    ds.write(0xBE);
 
-    Serial.print("  Data = ");
-    Serial.print(present, HEX);
-    Serial.print(" ");
-
+    // Read returned bytes
     ds.read_bytes(data, 9);
 
-    for (i = 0; i < 9; i++) {
-        Serial.print(data[i], HEX);
-        Serial.print(" ");
-    }
-    Serial.print(" CRC=");
-    Serial.print(OneWire::crc8(data, 8), HEX);
-    Serial.println();
+    // Calculate CRC value
+    crc = OneWire::crc8(data, 8);
+
+    // Set rawHexData variable
+    rawHexData = String::format("Data = %02x %02x %02x %02x %02x %02x %02x %02x %02x CRC = %02x",
+                                data[0], data[1], data[2], data[3],
+                                data[4], data[5], data[6], data[7],
+                                data[8], crc);
 
     // Format of the data (page 7 of datasheet):
     //
