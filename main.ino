@@ -1,7 +1,7 @@
-// Water Temperature Sensor Project.
+// DS18B20 Sensor Logger
 //
 // This firmware supports DS18B20 and DS1822 temperature sensors.
-// Tested oly with DS18B20.
+// Tested only with DS18B20.
 //
 // Code is based on example code by Joe Goggins, see `LICENSE.md` for more
 // information.

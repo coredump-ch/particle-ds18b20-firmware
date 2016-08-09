@@ -19,7 +19,10 @@ flash-usb:
 	${CLI} flash --usb ${DEVICE} .
 
 temp:
+	echo "Temperature:"
 	${CLI} get ${DEVICE} temperature
+	echo "Raw data:"
+	${CLI} get ${DEVICE} raw
 
 help:
 	@echo 'Supported make targets: login, setup, list, flash-ota, flash-usb, temp, help'
