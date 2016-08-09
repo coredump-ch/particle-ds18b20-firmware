@@ -1,9 +1,9 @@
-# Water Temperature Sensors
+# DS18B20 Temperature Logger for Particle Devices
 
-This project aims at building a network of internet-connected water temperature
-sensors around the Zürichsee using the Particle Electron.
+This is the firmware for a temperature logger using a Particle device (e.g. the
+Photon).
 
-The prototype is a regular indoor temperature sensor using the Particle Photon.
+Board: https://github.com/coredump-ch/photon-sensor-board
 
 
 ## Photon Setup
