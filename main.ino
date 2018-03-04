@@ -19,6 +19,10 @@ double celsius;
 // Buffer to read address
 byte addr[8];
 
+// TCP Client
+TCPClient client;
+byte server[] = { 94, 230, 210, 84 }; // status.crdmp.ch
+
 void setup(void) {
     // Initialize the serial console
     Serial.begin(57600);
@@ -43,6 +47,19 @@ void setup(void) {
         ds.write(0x1F | (3 << 5)); // Set resolution to 12 bit
     }
 
+}
+
+void upload(double celsius) {
+    if (client.connect(server, 80)) {
+        client.println("PUT /sensors/temperature_room/ HTTP/1.1");
+        client.println("Host: status.crdmp.ch");
+        client.println("Content-Type: application/x-www-form-urlencoded");
+        String payload = String::format("value=%.3f", celsius);
+        client.print("Content-Length: ");
+        client.println(payload.length());
+        client.println();
+        client.println(payload);
+    }
 }
 
 void loop(void) {
@@ -175,6 +192,7 @@ void loop(void) {
 
     // Sleep
     if (success) {
+        upload(celsius);
         delay(5000);
     } else {
         // Try again immediately
