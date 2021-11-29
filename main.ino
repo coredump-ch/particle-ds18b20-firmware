@@ -10,6 +10,10 @@
 
 OneWire ds(D0);  // on pin D0 (a 4.7K pull up resistor is necessary)
 
+// Config
+String server = "status.crdmp.ch";
+String sensor = CHANGEME; // E.g. "temperature_windows" or "temperature_entrance"
+
 // Variable to hold raw data
 String rawHexData = "uninitialized";
 
@@ -49,9 +53,12 @@ void setup(void) {
 }
 
 void upload(double celsius) {
-    if (client.connect("status.crdmp.ch", 80)) {
-        client.println("PUT /sensors/temperature_room/ HTTP/1.1");
-        client.println("Host: status.crdmp.ch");
+    if (client.connect(server, 80)) {
+        client.print("PUT /sensors/");
+        client.print(sensor);
+        client.println("/ HTTP/1.1");
+        client.print("Host: ");
+        client.println(server);
         client.println("Content-Type: application/x-www-form-urlencoded");
         String payload = String::format("value=%.3f", celsius);
         client.print("Content-Length: ");
