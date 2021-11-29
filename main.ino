@@ -21,7 +21,6 @@ byte addr[8];
 
 // TCP Client
 TCPClient client;
-byte server[] = { 94, 230, 210, 84 }; // status.crdmp.ch
 
 void setup(void) {
     // Initialize the serial console
@@ -50,7 +49,7 @@ void setup(void) {
 }
 
 void upload(double celsius) {
-    if (client.connect(server, 80)) {
+    if (client.connect("status.crdmp.ch", 80)) {
         client.println("PUT /sensors/temperature_room/ HTTP/1.1");
         client.println("Host: status.crdmp.ch");
         client.println("Content-Type: application/x-www-form-urlencoded");

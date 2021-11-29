@@ -3,7 +3,7 @@
 This is the firmware for a temperature logger using a Particle device (e.g. the
 Photon).
 
-Board: https://github.com/coredump-ch/photon-sensor-board
+Board: <https://github.com/coredump-ch/photon-sensor-board>
 
 
 ## Photon Setup
